@@ -8,7 +8,7 @@ export class SqlDatabase {
   static open(name: string, initStatements: string[] = []): Promise<SqlDatabase> {
     let dbPromise = isBrowser()
       .then(browser => {
-        const openDatabase = browser ? openBrowserDatabase : openCordovaDatabase;
+        const openDatabase = browser ? openBrowserDatabase : openBrowserDatabase;
         return openDatabase(name);
       });
     if (initStatements.length === 0) {
