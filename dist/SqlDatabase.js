@@ -7,7 +7,7 @@ export var SqlDatabase = (function () {
         if (initStatements === void 0) { initStatements = []; }
         var dbPromise = isBrowser()
             .then(function (browser) {
-            var openDatabase = browser ? openBrowserDatabase : openBrowserDatabase;
+            var openDatabase = browser ? openBrowserDatabase : openCordovaDatabase;
             return openDatabase(name);
         });
         if (initStatements.length === 0) {
