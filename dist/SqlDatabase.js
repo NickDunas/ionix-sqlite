@@ -66,7 +66,7 @@ function openBrowserDatabase(name) {
             resolve(new SqlDatabase(db));
         }
         catch (error) {
-            reject(error);
+            // reject(error);
         }
     });
 }
