@@ -51,7 +51,7 @@ export class SqlDatabase {
         for (let i = 0; i < params.length; i++) {
           tx.executeSql(
             statement,
-            params,
+            params[i],
             (tx, resultSet) => {
               resolve(resultSet);
             },

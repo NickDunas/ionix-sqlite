@@ -50,7 +50,7 @@ export var SqlDatabase = (function () {
         return new Promise(function (resolve, reject) {
             _this._db.transaction(function (tx) {
                 for (var i = 0; i < params.length; i++) {
-                    tx.executeSql(statement, params, function (tx, resultSet) {
+                    tx.executeSql(statement, params[i], function (tx, resultSet) {
                         resolve(resultSet);
                     }, function (tx, error) {
                         reject(error);
