@@ -4,4 +4,5 @@ export declare class SqlDatabase {
     constructor(_db: any);
     static open(name: string, initStatements?: string[]): Promise<SqlDatabase>;
     execute(statement: string, params?: any[]): Promise<SqlResultSet>;
+    executeBulk(statement: string, params?: any[]): Promise<SqlResultSet>;
 }

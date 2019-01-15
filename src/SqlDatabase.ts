@@ -2,15 +2,13 @@ import { isBrowser } from './platform';
 import { SqlResultSet } from './SqlResultSet';
 
 export class SqlDatabase {
-
-  constructor(private _db: any) { }
+  constructor(private _db: any) {}
 
   static open(name: string, initStatements: string[] = []): Promise<SqlDatabase> {
-    let dbPromise = isBrowser()
-      .then(browser => {
-        const openDatabase = browser ? openBrowserDatabase : openCordovaDatabase;
-        return openDatabase(name);
-      });
+    let dbPromise = isBrowser().then(browser => {
+      const openDatabase = browser ? openBrowserDatabase : openCordovaDatabase;
+      return openDatabase(name);
+    });
     if (initStatements.length === 0) {
       return dbPromise;
     }
@@ -32,14 +30,39 @@ export class SqlDatabase {
 
   execute(statement: string, params: any[] = []): Promise<SqlResultSet> {
     return new Promise((resolve, reject) => {
-      this._db.transaction(tx => tx.executeSql(statement, params, (tx, resultSet) => {
-        resolve(resultSet);
-      }, (tx, error) => {
-        reject(error)
-      }));
+      this._db.transaction(tx =>
+        tx.executeSql(
+          statement,
+          params,
+          (tx, resultSet) => {
+            resolve(resultSet);
+          },
+          (tx, error) => {
+            reject(error);
+          }
+        )
+      );
     });
   }
 
+  executeBulk(statement: string, params: any[] = []): Promise<SqlResultSet> {
+    return new Promise((resolve, reject) => {
+      this._db.transaction(tx => {
+        for (let i = 0; i < params.length; i++) {
+          tx.executeSql(
+            statement,
+            params,
+            (tx, resultSet) => {
+              resolve(resultSet);
+            },
+            (tx, error) => {
+              reject(error);
+            }
+          );
+        }
+      });
+    });
+  }
 }
 
 declare var sqlitePlugin: any;

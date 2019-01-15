@@ -5,8 +5,7 @@ export var SqlDatabase = (function () {
     }
     SqlDatabase.open = function (name, initStatements) {
         if (initStatements === void 0) { initStatements = []; }
-        var dbPromise = isBrowser()
-            .then(function (browser) {
+        var dbPromise = isBrowser().then(function (browser) {
             var openDatabase = browser ? openBrowserDatabase : openCordovaDatabase;
             return openDatabase(name);
         });
@@ -36,11 +35,28 @@ export var SqlDatabase = (function () {
         var _this = this;
         if (params === void 0) { params = []; }
         return new Promise(function (resolve, reject) {
-            _this._db.transaction(function (tx) { return tx.executeSql(statement, params, function (tx, resultSet) {
-                resolve(resultSet);
-            }, function (tx, error) {
-                reject(error);
-            }); });
+            _this._db.transaction(function (tx) {
+                return tx.executeSql(statement, params, function (tx, resultSet) {
+                    resolve(resultSet);
+                }, function (tx, error) {
+                    reject(error);
+                });
+            });
+        });
+    };
+    SqlDatabase.prototype.executeBulk = function (statement, params) {
+        var _this = this;
+        if (params === void 0) { params = []; }
+        return new Promise(function (resolve, reject) {
+            _this._db.transaction(function (tx) {
+                for (var i = 0; i < params.length; i++) {
+                    tx.executeSql(statement, params, function (tx, resultSet) {
+                        resolve(resultSet);
+                    }, function (tx, error) {
+                        reject(error);
+                    });
+                }
+            });
         });
     };
     return SqlDatabase;
@@ -66,7 +82,7 @@ function openBrowserDatabase(name) {
             resolve(new SqlDatabase(db));
         }
         catch (error) {
-            // reject(error);
+            reject(error);
         }
     });
 }
